@@ -2,3 +2,4 @@ Flask
 Flask-SocketIO
 gevent
 requests
+flask_session
