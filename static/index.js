@@ -1,14 +1,14 @@
+
+
+
+
 document.addEventListener('DOMContentLoaded', () => {
-
-  // setting up the form submit for username
-  document.querySelector('form').onsubmit = () => {
-    console.log("Form was clicked");
-    var username = document.querySelector('#input-username').value;
-    console.log(username);
-    return false;
+  const user = document.querySelector('#user').innerHTML;
+  // Check if correct user
+  if (!localStorage.getItem('user')){
+    console.log("Not right user")
   }
-
-
+  var room = "";
   // Connect to websocket
   var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
 
@@ -18,25 +18,31 @@ document.addEventListener('DOMContentLoaded', () => {
       // Each button should emit a "submit vote" event
       document.querySelector('#button-message-send').onclick = () => {
         const message = document.querySelector('#input-message-section').value;
-        const user = "Bowen Brooks";
-        console.log(message);
+        // const user = document.querySelector('#user').innerHTML;
+        room = document.querySelector('#room').innerHTML;
         data = {
           'message': message, 
-          'user': user
+          'user': user,
+          'room': room
         };
-        socket.emit('submit message', data);
+        console.log(data);
+        socket.emit("Send Message", data);
+
+        document.querySelector('#input-message-section').innerHTML = "";
       }; 
               
     });
 
   // // When a new vote is announced, add to the unordered list
-  socket.on('message sent', data => {
-    const li = document.createElement('li');
-    const p = document.createElement('p');
-    p.innerHTML = data['user'];
-    li.innerHTML = data['message'];
-    li.appendChild(p);
-    document.querySelector('#list').append(li);
+  socket.on("New Message", data => {
+    if(data['room'] === room){
+      const li = document.createElement('li');
+      const p = document.createElement('p');
+      p.innerHTML = data['user'];
+      li.innerHTML = data['message'];
+      li.appendChild(p);
+      document.querySelector('#list').append(li);
+    }
   });
 
 });

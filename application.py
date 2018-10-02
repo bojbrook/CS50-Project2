@@ -1,9 +1,13 @@
 import os
 import requests
 
-from flask import Flask, jsonify, render_template, request, session
+from flask import Flask, jsonify, render_template, request, session, redirect, url_for
 from flask_session import Session
 from flask_socketio import SocketIO, emit
+
+# Empty global variable
+DisplayName = None
+ChannelNames = []
 
 
 app = Flask(__name__)
@@ -17,22 +21,46 @@ Session(app)
 
 
 
+
 @app.route("/")
+@app.route("/index")
 def index():
-    if not session.get('user'):
-        return render_template("login.html")
-    return render_template("index.html",user=session['user'])
+    if not session.get('logged in'):
+        return redirect(url_for('login'))
+    print(DisplayName)
+    return render_template("index.html",user=DisplayName, room=session['room'])
 
 @app.route("/login", methods=["GET"])
 def login():
-    user_name = request.form.get('input-username')
-    print (user_name)
-    session['user'] = user_name
-    return render_template("index.html",user=user_name)
+    return render_template('login.html')
+
+@app.route("/<string:channel>")
+def channel(channel):
+    return render_template("index.html",user=DisplayName, room=channel)
+
+@app.route("/login/move", methods=["POST"])
+def move():
+    if request.method == 'POST':
+        global DisplayName 
+        global ChannelNames
+        DisplayName = request.form.get('inputUsername')
+        channle_name = request.form.get('inputChatRoomName')
+        # Checking if already a channel
+        if channle_name in ChannelNames:
+            return "Already a Channel"
+        ChannelNames.append(channle_name)
+        print (f"User name {ChannelNames}")
+        session['logged in'] = True
+        return redirect(url_for('channel',channel=channle_name))
+    else:
+        return "ERROR"
+
+@app.route("/channels")
+def channels():
+    return render_template('channels.html', channels=ChannelNames)
 
 
-@socketio.on("submit message")
+@socketio.on("Send Message")
 def message(data):
-    messages = data['message'] 
-    print (f"Here is the data {data}")
-    emit("message sent", data, broadcast=True)
+    print(f"Room Name {data['room']}")
+    emit("New Message", data, broadcast=True)
