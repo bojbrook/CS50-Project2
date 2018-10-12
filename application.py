@@ -5,9 +5,11 @@ from flask import Flask, jsonify, render_template, request, session, redirect, u
 from flask_session import Session
 from flask_socketio import SocketIO, emit
 
+from Channel import Channel
+
 # Empty global variable
 DisplayName = None
-ChannelNames = []
+Channels = []
 
 
 app = Flask(__name__)
@@ -28,39 +30,72 @@ def index():
     if not session.get('logged in'):
         return redirect(url_for('login'))
     print(DisplayName)
-    return render_template("index.html",user=DisplayName, room=session['room'])
+    return render_template("index.html",user=DisplayName, room="General")
 
 @app.route("/login", methods=["GET"])
 def login():
     return render_template('login.html')
 
-@app.route("/<string:channel>")
-def channel(channel):
-    return render_template("index.html",user=DisplayName, room=channel)
+# Channel messaging page
+@app.route("/<string:name>")
+def channel(name):
+    channel = getChannel(name)
+    print (channel)
+    if(channel == None):
+        return "No Channel Exists"
+    room = channel.get_ChannelName()
+    return render_template("index.html", user=DisplayName, room=room)
 
 @app.route("/login/move", methods=["POST"])
 def move():
     if request.method == 'POST':
         global DisplayName 
-        global ChannelNames
+        global Channels
         DisplayName = request.form.get('inputUsername')
-        channle_name = request.form.get('inputChatRoomName')
-        # Checking if already a channel
-        if channle_name in ChannelNames:
+        channel_name = request.form.get('inputChatRoomName')
+        
+
+        # Checking if already a channelName
+        if isChannel(channel_name):
             return "Already a Channel"
-        ChannelNames.append(channle_name)
-        print (f"User name {ChannelNames}")
+        # else creates a new channel   
+        channel = Channel(channel_name)
+        # Adding channel to List
+        Channels.append(channel)
         session['logged in'] = True
-        return redirect(url_for('channel',channel=channle_name))
+        return redirect(url_for('channel',name=channel.get_ChannelName()))
     else:
         return "ERROR"
 
+
+#Page displaying all the channels
 @app.route("/channels")
 def channels():
-    return render_template('channels.html', channels=ChannelNames)
+    return render_template('channels.html', channels=Channels)
 
 
 @socketio.on("Send Message")
 def message(data):
-    print(f"Room Name {data['room']}")
+    print(f"Room Name {data['channel']}")
+    channel = getChannel(data['channel'])
+    channel.add_message(data['user'],data['message'])
+    channel.print_message()
     emit("New Message", data, broadcast=True)
+
+
+
+# Get channel from list
+def getChannel(name): 
+    for channel in Channels:
+        print (channel.get_ChannelName())
+        print (name)
+        if(channel.get_ChannelName() == name):
+            print ("WE found the channel")
+            return channel
+    return None
+
+def isChannel(name):
+    for channel in Channels:
+        if(name == channel.get_ChannelName()):
+            return True
+    return False

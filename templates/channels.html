@@ -11,7 +11,7 @@ Home
   <ul>
       {% for channel in channels %}
       <li>
-          <a href="{{url_for("channel", channel=channel)}}">{{channel}}</a>
+          <a href="{{ url_for("channel", name=channel.get_ChannelName() )}}">{{channel.get_ChannelName()}}</a>
       </li>
   {% endfor %}
   </ul>

@@ -4,11 +4,9 @@
 
 document.addEventListener('DOMContentLoaded', () => {
   const user = document.querySelector('#user').innerHTML;
-  // Check if correct user
-  if (!localStorage.getItem('user')){
-    console.log("Not right user")
-  }
-  var room = "";
+  
+
+  var channel = "";
   // Connect to websocket
   var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
 
@@ -19,11 +17,11 @@ document.addEventListener('DOMContentLoaded', () => {
       document.querySelector('#button-message-send').onclick = () => {
         const message = document.querySelector('#input-message-section').value;
         // const user = document.querySelector('#user').innerHTML;
-        room = document.querySelector('#room').innerHTML;
+        channel = document.querySelector('#room').innerHTML;
         data = {
           'message': message, 
           'user': user,
-          'room': room
+          'channel': channel
         };
         console.log(data);
         socket.emit("Send Message", data);
@@ -35,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // // When a new vote is announced, add to the unordered list
   socket.on("New Message", data => {
-    if(data['room'] === room){
+    if(data['channel'] === channel){
       const li = document.createElement('li');
       const p = document.createElement('p');
       p.innerHTML = data['user'];
