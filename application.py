@@ -8,7 +8,7 @@ from flask_socketio import SocketIO, emit
 from Channel import Channel
 
 # Empty global variable
-DisplayName = None
+# DisplayName = None
 Room = "General"
 Channels = []
 
@@ -26,12 +26,9 @@ Session(app)
 
 
 @app.route("/")
-@app.route("/index")
 def index():
-    if not session.get('logged in'):
-        return redirect(url_for('login'))
-    print(DisplayName)
-    return render_template("index.html",user=DisplayName, room=Room)
+    # print(DisplayName)
+    return redirect(url_for('login'))
 
 @app.route("/login", methods=["GET"])
 def login():
@@ -42,35 +39,34 @@ def logout():
     session['logged in'] = False
     return render_template('login.html')
 
-# Channel messaging page
+#Channel messaging page
 @app.route("/<string:name>")
 def channel(name):
     channel = getChannel(name)
-    print (channel)
+    # redirects to login page
     if(channel == None):
-        return "No Channel Exists"
+        return redirect(url_for('login'))
     room = channel.get_ChannelName()
-    return render_template("index.html", user=DisplayName, room=room)
+    return render_template("index.html",room=room, messages = channel.get_messages())
 
 # Handles the login of a user
 @app.route("/login/move", methods=["POST"])
 def move():
     if request.method == 'POST':
-        global DisplayName 
+        # global DisplayName 
         global Channels
-        DisplayName = request.form.get('inputUsername')
+        # DisplayName = request.form.get('inputUsername')
         # Need To add input for channel name /
         # For now im just hard coding it
         channel_name = request.form.get('inputChannelname')
         # channel_name = Room
         print(f"CHANNEL: {channel_name}")
-        # Checking if already a channelName
-        if isChannel(channel_name):
-            return "Already a Channel"
-        # else creates a new channel   
-        channel = Channel(channel_name)
-        # Adding channel to List
-        Channels.append(channel)
+        # Checking  already a channelName
+        if not isChannel(channel_name):
+            # creates a new channel   
+            channel = Channel(channel_name)
+            # Adding channel to List
+            Channels.append(channel)
         session['logged in'] = True
         return redirect(url_for('channel',name=channel_name))
     else:
@@ -90,6 +86,7 @@ def channels():
 def addChannel():
     return render_template('addChannel.html')
 
+# Creates a new channel
 @app.route("/channels/createChannel", methods=["POST"])
 def createChannel():
     if request.method == 'POST':
@@ -97,16 +94,16 @@ def createChannel():
         channel_name = request.form.get("channelName")
         print (f"Creating channel {channel_name}")
         # Checking if already a channel
-        if isChannel(channel_name):
-            return "Already a Channel"
-        # else creates a new channel   
-        channel = Channel(channel_name)
-        # Adding channel to List
-        Channels.append(channel)
+        if not isChannel(channel_name):
+            # else creates a new channel   
+            channel = Channel(channel_name)
+            # Adding channel to List
+            Channels.append(channel)
         return redirect(url_for('channel',name=channel_name))
-    return "Error"
+    return "Error Something went wrong"
 
 
+# Handles the socket messages between users
 @socketio.on("Send Message")
 def message(data):
     print(f"Room Name {data['channel']}")

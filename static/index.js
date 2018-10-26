@@ -1,14 +1,18 @@
 
-
-
-
 document.addEventListener('DOMContentLoaded', () => {
-  const user = document.querySelector('#user').innerHTML;
   
-
-  var channel = "";
+  // gets the user name from localStorage
+  const user = sessionStorage.user
+  
+  // if (user)
+  document.querySelector('#user').innerHTML = user;
+  
+  var channel = document.querySelector('#room').innerHTML;
   // Connect to websocket
   var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
+
+  
+  console.log("Please " + user);
 
   // When connected, configure buttons
   socket.on('connect', () => {
@@ -16,8 +20,9 @@ document.addEventListener('DOMContentLoaded', () => {
       // Each button should emit a "submit vote" event
       document.querySelector('#button-message-send').onclick = () => {
         const message = document.querySelector('#input-message-section').value;
+        document.querySelector('#input-message-section').value = "";  //reseting the input
         // const user = document.querySelector('#user').innerHTML;
-        channel = document.querySelector('#room').innerHTML;
+        // channel = document.querySelector('#room').innerHTML;
         data = {
           'message': message, 
           'user': user,
@@ -44,8 +49,3 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
 });
-
-
-
-
-// return false; //so page doesn't reload   

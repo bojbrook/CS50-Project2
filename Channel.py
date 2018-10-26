@@ -10,7 +10,7 @@ class Channel:
 
   def add_message(self, user, message):
       m = Message(user,message)
-      self.messages.append(m);
+      self.messages.append(m)
   
   def get_messages(self):
     return self.messages

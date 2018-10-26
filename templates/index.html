@@ -5,21 +5,32 @@
 Home
 {% endblock %}
 
+{% block script %}
+  <script src="{{ url_for('static', filename='index.js') }}"></script>
+{% endblock %}
+
 {% block body %}
 <div>
-  <ul>
-  <li><a href={{url_for("logout")}}>Log out</a></li>
-  <li><a href={{url_for("channels")}}>Channels</a></li>
-  <li><a href={{url_for("addChannel")}}>New Channel</a></li>
-  
+  <ul class="nav justify-content-end">  
+  <li class="nav-item"><a class="nav-link active" href={{url_for("channels")}}>Channels</a></li>
+  <li class="nav-item"><a class="nav-link active" href={{url_for("addChannel")}}>New Channel</a></li>
+  <li class="nav-item"><a class="nav-link active" href={{url_for("logout")}}>Log out</a></li>
   </ul>
 </div>
 
-<h1 id="user">{{user}}</h1>
+<h1 id="user"/>
 <h2 id="room">{{room}}</h2>
 
 <div>
-  <ul id="list"/>
+  <ul id="list">
+  {% for message in messages %}
+    <li>
+      {{message.get_message()}}
+      <p>{{message.get_user()}}</p>
+    </li>
+  {%endfor%}
+  
+  </ul>
 </div>
 <div id="input-div" style="bottom: 15px; position: absolute; left: 50%; margin-left: -25%;">
   <input id="input-message-section" type='text' style="width: 300px;">
