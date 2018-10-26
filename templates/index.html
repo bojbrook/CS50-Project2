@@ -6,14 +6,17 @@ Home
 {% endblock %}
 
 {% block body %}
-<h1 id="user">{{user}}</h1>
-<h2 id="room">{{room}}</h2>
 <div>
   <ul>
-  <li><a href={{url_for("login")}}>Log out</a></li>
+  <li><a href={{url_for("logout")}}>Log out</a></li>
   <li><a href={{url_for("channels")}}>Channels</a></li>
+  <li><a href={{url_for("addChannel")}}>New Channel</a></li>
+  
   </ul>
 </div>
+
+<h1 id="user">{{user}}</h1>
+<h2 id="room">{{room}}</h2>
 
 <div>
   <ul id="list"/>

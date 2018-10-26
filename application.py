@@ -9,6 +9,7 @@ from Channel import Channel
 
 # Empty global variable
 DisplayName = None
+Room = "General"
 Channels = []
 
 
@@ -30,10 +31,15 @@ def index():
     if not session.get('logged in'):
         return redirect(url_for('login'))
     print(DisplayName)
-    return render_template("index.html",user=DisplayName, room="General")
+    return render_template("index.html",user=DisplayName, room=Room)
 
 @app.route("/login", methods=["GET"])
 def login():
+    return render_template('login.html')
+
+@app.route("/logout")
+def logout():
+    session['logged in'] = False
     return render_template('login.html')
 
 # Channel messaging page
@@ -46,15 +52,18 @@ def channel(name):
     room = channel.get_ChannelName()
     return render_template("index.html", user=DisplayName, room=room)
 
+# Handles the login of a user
 @app.route("/login/move", methods=["POST"])
 def move():
     if request.method == 'POST':
         global DisplayName 
         global Channels
         DisplayName = request.form.get('inputUsername')
-        channel_name = request.form.get('inputChatRoomName')
-        
-
+        # Need To add input for channel name /
+        # For now im just hard coding it
+        channel_name = request.form.get('inputChannelname')
+        # channel_name = Room
+        print(f"CHANNEL: {channel_name}")
         # Checking if already a channelName
         if isChannel(channel_name):
             return "Already a Channel"
@@ -63,7 +72,7 @@ def move():
         # Adding channel to List
         Channels.append(channel)
         session['logged in'] = True
-        return redirect(url_for('channel',name=channel.get_ChannelName()))
+        return redirect(url_for('channel',name=channel_name))
     else:
         return "ERROR"
 
@@ -71,7 +80,31 @@ def move():
 #Page displaying all the channels
 @app.route("/channels")
 def channels():
-    return render_template('channels.html', channels=Channels)
+    if len(Channels) > 0:
+        return render_template('channels.html', channels=Channels)
+    else:
+        return render_template('addChannel.html')
+
+# Page for adding a new channel
+@app.route("/channels/addChannel")
+def addChannel():
+    return render_template('addChannel.html')
+
+@app.route("/channels/createChannel", methods=["POST"])
+def createChannel():
+    if request.method == 'POST':
+        global Channels
+        channel_name = request.form.get("channelName")
+        print (f"Creating channel {channel_name}")
+        # Checking if already a channel
+        if isChannel(channel_name):
+            return "Already a Channel"
+        # else creates a new channel   
+        channel = Channel(channel_name)
+        # Adding channel to List
+        Channels.append(channel)
+        return redirect(url_for('channel',name=channel_name))
+    return "Error"
 
 
 @socketio.on("Send Message")
@@ -87,8 +120,8 @@ def message(data):
 # Get channel from list
 def getChannel(name): 
     for channel in Channels:
-        print (channel.get_ChannelName())
-        print (name)
+        print (f"channel name: {channel.get_ChannelName()}")
+        print (f"Name: {name}")
         if(channel.get_ChannelName() == name):
             print ("WE found the channel")
             return channel
