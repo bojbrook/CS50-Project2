@@ -10,30 +10,25 @@ Home
 {% endblock %}
 
 {% block body %}
-<div>
-  <ul class="nav justify-content-end">  
-  <li class="nav-item"><a class="nav-link active" href={{url_for("channels")}}>Channels</a></li>
-  <li class="nav-item"><a class="nav-link active" href={{url_for("addChannel")}}>New Channel</a></li>
-  <li class="nav-item"><a class="nav-link active" href={{url_for("logout")}}>Log out</a></li>
-  </ul>
-</div>
 
-<h1 id="user"/>
-<h2 id="room">{{room}}</h2>
+<!-- <h1 id="user"/> -->
+<h1 id="room">{{room}}</h1>
 
-<div>
-  <ul id="list">
-  {% for message in messages %}
-    <li>
-      {{message.get_message()}}
-      <p>{{message.get_user()}}</p>
-    </li>
-  {%endfor%}
+<ul id="list" class="list-group">
   
-  </ul>
-</div>
-<div id="input-div" style="bottom: 15px; position: absolute; left: 50%; margin-left: -25%;">
-  <input id="input-message-section" type='text' style="width: 300px;">
-  <button id="button-message-send">Send</button>
+    {% for message in messages %}
+      <li class="list-group-item">
+        {{message.get_message()}}
+        <p>{{message.get_user()}} <span class="message-time">{{message.get_time()}}</span></p>
+      </li>
+    {%endfor%} 
+  
+</ul>
+
+<div class="input-group input-group-sm mb-3" id="input-div" style="bottom: 15px; position: fixed; left: 50%; margin-left: -25%;">
+  <div class="input-group-prepend">
+    <input class="form-control" id="input-message-section" type='text' style="width: 400px;">
+    <button id="button-message-send">Send</button>
+  </div>
 </div>
 {% endblock %}

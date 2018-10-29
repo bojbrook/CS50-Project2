@@ -106,9 +106,10 @@ def createChannel():
 # Handles the socket messages between users
 @socketio.on("Send Message")
 def message(data):
+    print(f"DATA {data}")
     print(f"Room Name {data['channel']}")
     channel = getChannel(data['channel'])
-    channel.add_message(data['user'],data['message'])
+    channel.add_message(data['user'],data['message'], data['time'])
     channel.print_message()
     emit("New Message", data, broadcast=True)
 

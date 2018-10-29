@@ -8,8 +8,8 @@ class Channel:
   def get_ChannelName(self):
     return self.channel
 
-  def add_message(self, user, message):
-      m = Message(user,message)
+  def add_message(self, user, message, time):
+      m = Message(user,message, time)
       self.messages.append(m)
   
   def get_messages(self):

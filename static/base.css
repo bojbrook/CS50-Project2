@@ -1,0 +1,18 @@
+.list-group-item{
+  width: 18rem;
+}
+
+.message-time{
+  position: absolute;
+  bottom: 0;
+  right: 0;
+}
+
+.nav{
+  background-color: #5c6066;
+}
+
+body{
+  background-color: #787d84;
+}
+
