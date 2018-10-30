@@ -110,7 +110,6 @@ def message(data):
     print(f"Room Name {data['channel']}")
     channel = getChannel(data['channel'])
     channel.add_message(data['user'],data['message'], data['time'])
-    channel.print_message()
     emit("New Message", data, broadcast=True)
 
 
@@ -118,10 +117,7 @@ def message(data):
 # Get channel from list
 def getChannel(name): 
     for channel in Channels:
-        print (f"channel name: {channel.get_ChannelName()}")
-        print (f"Name: {name}")
         if(channel.get_ChannelName() == name):
-            print ("WE found the channel")
             return channel
     return None
 

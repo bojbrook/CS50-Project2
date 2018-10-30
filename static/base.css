@@ -1,11 +1,19 @@
 .list-group-item{
   width: 18rem;
+  padding: 2px;
+  margin-bottom: 5px;
 }
 
 .message-time{
   position: absolute;
   bottom: 0;
   right: 0;
+  font-weight: italic;
+  font-size: 12px;
+}
+
+.list-group{
+  padding: 5px;
 }
 
 .nav{
@@ -14,5 +22,9 @@
 
 body{
   background-color: #787d84;
+}
+
+.message-sender{
+  font-weight: bold;
 }
 

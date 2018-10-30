@@ -4,20 +4,27 @@ const MONTHS = ["Jan","Feb","Mar","Apr","May","June","July","Aug","Sept","Oct","
 document.addEventListener('DOMContentLoaded', () => {
   
   // gets the user name from localStorage
-  const user = sessionStorage.user
+  // const user = sessionStorage.user
+  const user = localStorage.getItem('user')
   
   // if (user)
   // document.querySelector('#user').innerHTML = user;
-
   
-  
+  //getting the channel Name & setting current channel
   var channel = document.querySelector('#room').innerHTML;
-  document.querySelector('#room').innerHTML = document.querySelector('#room').innerHTML.toUpperCase();
+  document.querySelector('#room').innerHTML = channel.toUpperCase();
+  localStorage.setItem('currentChannel',channel);
+
   // Connect to websocket
   var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
 
   
   console.log("Logged in " + user);
+
+  // logging out a use
+  document.querySelector('#nav-logout').onclick = () =>{
+    localStorage.setItem("currentChannel","null");
+  }
 
   // When connected, configure buttons
   socket.on('connect', () => {
@@ -41,6 +48,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         document.querySelector('#input-message-section').innerHTML = "";
       }; 
+
+      
               
     });
 
@@ -53,7 +62,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
       const p = document.createElement('p');
-      p.innerText = data['user'];
+      p.className = "message-sender";
+      p.innerText = "-"+data['user'];
       
       span_time = document.createElement('span');
       span_time.className = "message-time";

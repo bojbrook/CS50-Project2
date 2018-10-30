@@ -19,7 +19,7 @@ Home
     {% for message in messages %}
       <li class="list-group-item">
         {{message.get_message()}}
-        <p>{{message.get_user()}} <span class="message-time">{{message.get_time()}}</span></p>
+        <p class="message-sender">-{{message.get_user()}} <span class="message-time">{{message.get_time()}}</span></p>
       </li>
     {%endfor%} 
   
