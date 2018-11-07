@@ -18,6 +18,9 @@ document.addEventListener('DOMContentLoaded', () => {
   // Connect to websocket
   var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
 
+
+
+
   
   console.log("Logged in " + user);
 
@@ -25,6 +28,16 @@ document.addEventListener('DOMContentLoaded', () => {
   document.querySelector('#nav-logout').onclick = () =>{
     localStorage.setItem("currentChannel","null");
   }
+
+
+  const btn =  document.querySelectorAll(".BTNDelete");
+
+  // btn.forEach(i => {
+  //   i.onclick = () =>{
+  //     console.log("YEs");
+  //   }
+  // });
+
 
   // When connected, configure buttons
   socket.on('connect', () => {
@@ -49,6 +62,26 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelector('#input-message-section').innerHTML = "";
       }; 
 
+      //Finding each message
+      const messages =  document.querySelectorAll(".list-group-item");
+      console.log(messages);
+
+      for(i =0; i < messages.length; i++){
+        const message = messages[i];
+        // removes the dash from the sender <p> inorder to get the sender
+        const sender = message.querySelector("p").innerText.substring(1);
+        if(sender === user){
+          console.log("Button shouldn show up")
+          const btn = message.querySelector("button");
+          btn.setAttribute("style","visibility:visible;");
+          btn.onclick = () => {
+            console.log(sender)
+          }
+        }
+        console.log(message);
+
+
+      }
       
               
     });
@@ -65,15 +98,22 @@ document.addEventListener('DOMContentLoaded', () => {
       p.className = "message-sender";
       p.innerText = "-"+data['user'];
       
-      span_time = document.createElement('span');
+      const span_time = document.createElement('span');
       span_time.className = "message-time";
       span_time.innerText = data['time'];
+
+      const delete_BTN = document.createElement('button');
+      delete_BTN.className = 'BTNDelete';
+      delete_BTN.innerText = "Delete";
+
       
       p.appendChild(span_time);
+
 
       
       li.innerText= data['message'];
       li.appendChild(p);
+      li.appendChild(delete_BTN);
       document.querySelector('#list').append(li);
     }
   });

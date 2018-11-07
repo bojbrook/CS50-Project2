@@ -19,7 +19,9 @@ Home
     {% for message in messages %}
       <li class="list-group-item">
         {{message.get_message()}}
-        <p class="message-sender">-{{message.get_user()}} <span class="message-time">{{message.get_time()}}</span></p>
+        <p class="message-sender">-{{message.get_user()}} </p>
+        <span class="message-time">{{message.get_time()}}</span>
+        <button class="BTNDelete">Delete</button>
       </li>
     {%endfor%} 
   
