@@ -49,13 +49,32 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelector('#input-message-section').innerHTML = "";
       }; 
 
-      
+
+       //Finding each message
+       const messages =  document.querySelectorAll(".list-group-item");
+ 
+       for(i =0; i < messages.length; i++){
+         const message = messages[i];
+         // removes the dash from the sender <p> inorder to get the sender
+         const sender = message.querySelector("p").innerText.substring(1);
+         if(sender === user){
+           const btn = message.querySelector("button");
+           btn.setAttribute("style","visibility:visible;");
+           btn.onclick = () => {
+             console.log(sender)
+             socket.emit("Delete Message", sender);
+           }
+         }
+
+        }
               
     });
 
   // // When a new vote is announced, add to the unordered list
   socket.on("New Message", data => {
     if(data['channel'] === channel){
+
+      console.log(data);
 
       const li = document.createElement('li');
       li.className="list-group-item";
@@ -68,6 +87,15 @@ document.addEventListener('DOMContentLoaded', () => {
       span_time = document.createElement('span');
       span_time.className = "message-time";
       span_time.innerText = data['time'];
+
+
+      const delete_BTN = document.createElement('button');
+      delete_BTN.className = 'BTNDelete';
+      delete_BTN.innerText = "Delete";
+
+      if(data[user] == user){
+        delete_BTN.style.visibility = "visible";
+      }
       
       p.appendChild(span_time);
 

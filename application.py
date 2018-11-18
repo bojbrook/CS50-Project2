@@ -112,6 +112,9 @@ def message(data):
     channel.add_message(data['user'],data['message'], data['time'])
     emit("New Message", data, broadcast=True)
 
+@socketio.on("Delete Message")
+def deleteMessage(data):
+    print(f"Sender is {data}")
 
 
 # Get channel from list

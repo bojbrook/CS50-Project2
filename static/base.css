@@ -28,3 +28,11 @@ body{
   font-weight: bold;
 }
 
+/* Styling for the delete button */
+.BTNDelete{
+  position: absolute;
+  top: 0;
+  right: 0;
+  visibility: hidden;
+}
+
